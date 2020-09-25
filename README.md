@@ -3,7 +3,8 @@
 
 * 官方：https://apollo.auto/devcenter/idpcourse_cn.html
 * github：https://github.com/ApolloAuto/apollo
-
+* 学习中心：https://apollo.auto/devcenter/idpcourse_cn.html
+* 个人笔记：https://www.yuque.com/huangzhongqing/apollo
 
 **Apollo是百度的自动驾驶开源框架，根据自动驾驶的功能划分为不同的模块**
 
