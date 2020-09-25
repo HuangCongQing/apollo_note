@@ -125,7 +125,6 @@ Apollo 无人驾驶平台是以**高精地图和定位模块**作为核心。其
 
 
 
-<a name="06BCm"></a>
 ### 3. 云服务
 
 - 不仅仅提供数据，也提供了很多应用程序
@@ -140,11 +139,7 @@ Apollo 无人驾驶平台是以**高精地图和定位模块**作为核心。其
 - DuerOS： 智能语音系统
 
 
-<br />
-<br />
-
-<a name="6OBXL"></a>
 ### 4. Apollo Github库
 
-<br />
-<br />[Technical Tutorials](https://github.com/ApolloAuto/apollo/blob/master/docs/technical_tutorial/README.md)
+
+[Technical Tutorials](https://github.com/ApolloAuto/apollo/blob/master/docs/technical_tutorial/README.md)
