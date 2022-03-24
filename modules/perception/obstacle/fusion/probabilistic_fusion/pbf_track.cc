@@ -27,7 +27,7 @@
 #include "modules/perception/obstacle/base/types.h"
 #include "modules/perception/obstacle/fusion/probabilistic_fusion/pbf_base_track_object_matcher.h"
 #include "modules/perception/obstacle/fusion/probabilistic_fusion/pbf_imf_fusion.h"
-#include "modules/perception/obstacle/fusion/probabilistic_fusion/pbf_kalman_motion_fusion.h"
+#include "modules/perception/obstacle/fusion/probabilistic_fusion/pbf_kalman_motion_fusion.h" // motion_fusion(卡尔曼滤波 更新速度和加速度)
 #include "modules/perception/obstacle/fusion/probabilistic_fusion/pbf_sensor_manager.h"
 #include "ros/include/ros/ros.h"
 
@@ -103,6 +103,7 @@ void PbfTrack::SetMotionFusionMethod(const std::string &motion_fusion_method) {
 
 PbfTrack::~PbfTrack() {}
 
+// motion_fusion(卡尔曼滤波 
 void PbfTrack::UpdateWithSensorObject(std::shared_ptr<PbfSensorObject> obj,
                                       double match_dist) {
   const SensorType &sensor_type = obj->sensor_type;
@@ -111,6 +112,7 @@ void PbfTrack::UpdateWithSensorObject(std::shared_ptr<PbfSensorObject> obj,
     PerformMotionFusionAsync(obj);
     std::cerr << "PBFIMF:track id is: " << GetTrackId() << std::endl;
   } else {
+    // 
     PerformMotionFusion(obj);
   }
 
@@ -259,6 +261,7 @@ void PbfTrack::PerformMotionFusionAsync(std::shared_ptr<PbfSensorObject> obj) {
   }
 }
 
+// 
 void PbfTrack::PerformMotionFusion(std::shared_ptr<PbfSensorObject> obj) {
   if (motion_fusion_ == nullptr) {
     AERROR << "Skip motion fusion becuase motion_fusion_ is nullptr.";
@@ -304,7 +307,7 @@ void PbfTrack::PerformMotionFusion(std::shared_ptr<PbfSensorObject> obj) {
         Eigen::Vector3d anchor_point;
         Eigen::Vector3d velocity;
         motion_fusion_->GetState(&anchor_point, &velocity);
-        fused_object_->object->velocity = velocity;
+        fused_object_->object->velocity = velocity; // 速度
       } else {
         motion_fusion_->Initialize(obj);
       }
@@ -386,6 +389,7 @@ int PbfTrack::GetNextTrackId() {
   return ret_track_id;
 }
 
+// 判断
 bool PbfTrack::AbleToPublish() {
   if (FLAGS_use_navigation_mode && !camera_objects_.empty()) {
     return true;

@@ -174,9 +174,13 @@ bool FusionSubnode::InitOutputStream() {
 
   return true;
 }
-
+// 融合入口：https://github.com/YannZyl/Apollo-Note/blob/master/docs/perception/obstacles_fusion_arch.md
+// 从接受列表中获取fusion节点的接收event数据
+// 根据上述event数据，从LidarObjectData和RadarObjectData两个共享数据容器中获取数据，并处理
+// 发布信息
 Status FusionSubnode::ProcEvents() {
   for (auto event_meta : sub_meta_events_) {
+    // A. get lidar and radar's data
     if (event_meta.event_id == lane_event_id_) continue;  // ignore lane event
 
     std::vector<Event> events;
@@ -189,6 +193,7 @@ Status FusionSubnode::ProcEvents() {
       usleep(500);
       continue;
     }
+    // B. process: fusion======================================================
     Process(event_meta, events);
 
     if (event_meta.event_id != pub_driven_event_id_) {
@@ -212,7 +217,9 @@ Status FusionSubnode::ProcEvents() {
 Status FusionSubnode::Process(const EventMeta &event_meta,
                               const std::vector<Event> &events) {
   CipvOptions cipv_options;
+  // A. collect data
   std::vector<SensorObjects> sensor_objs;
+  // BuildSensorObjs 将Lidar和Radar感知发布的数据，全部收集在一起
   if (!BuildSensorObjs(events, &sensor_objs)) {
     AERROR << "Failed to build_sensor_objs";
     error_code_ = common::PERCEPTION_ERROR_PROCESS;
@@ -221,7 +228,8 @@ Status FusionSubnode::Process(const EventMeta &event_meta,
   PERF_BLOCK_START();
   objects_.clear();
   double latest_fused_ts = sensor_objs.back().timestamp;
-  if (!fusion_->Fuse(sensor_objs, &objects_)) {
+  // B. fusion融合==========================================================
+  if (!fusion_->Fuse(sensor_objs, &objects_)) { // probabilistic_fusion.cc
     AWARN << "Failed to call fusion plugin."
           << " event_meta: [" << event_meta.to_string()
           << "] event_cnt:" << events.size() << " event_0: ["
@@ -342,6 +350,8 @@ bool FusionSubnode::SubscribeEvents(const EventMeta &event_meta,
   }
   return true;
 }
+// 使用FusionSubnode::BuildSensorObjs函数，将Lidar和Radar感知发布的数据，全部收集在一起，
+// 放在multi_sensor_objs向量中，并注明了每个数据的来源(感知设备)，是Lidar还是Radar
 bool FusionSubnode::BuildSensorObjs(
     const std::vector<Event> &events,
     std::vector<SensorObjects> *multi_sensor_objs) {
@@ -364,7 +374,7 @@ bool FusionSubnode::BuildSensorObjs(
       return false;
     }
     sensor_objects->sensor_id = GetSensorType(sensor_objects->sensor_type);
-    multi_sensor_objs->push_back(*sensor_objects);
+    multi_sensor_objs->push_back(*sensor_objects); // 
     ADEBUG << "get sensor objs:" << sensor_objects->ToString();
   }
   return true;

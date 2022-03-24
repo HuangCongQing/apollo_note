@@ -24,6 +24,7 @@
 namespace apollo {
 namespace perception {
 
+// 匹配=========================main
 bool PbfHmTrackObjectMatcher::Match(
     const std::vector<PbfTrackPtr> &fusion_tracks,
     const std::vector<std::shared_ptr<PbfSensorObject>> &sensor_objects,
@@ -43,7 +44,7 @@ bool PbfHmTrackObjectMatcher::Match(
     AERROR << "reference points is nullptr!";
     return false;
   }
-
+  // 01
   IdAssign(fusion_tracks, sensor_objects, assignments, unassigned_fusion_tracks,
            unassigned_sensor_objects);
   ADEBUG << "Num of fusion tracks = " << fusion_tracks.size()
@@ -51,6 +52,7 @@ bool PbfHmTrackObjectMatcher::Match(
          << ", num of assignments = " << assignments->size();
 
   std::vector<std::vector<double>> association_mat;
+  // 02
   ComputeAssociationMat(fusion_tracks, sensor_objects,
                         *unassigned_fusion_tracks, *unassigned_sensor_objects,
                         *(options.ref_point), &association_mat);
@@ -71,7 +73,8 @@ bool PbfHmTrackObjectMatcher::Match(
   if (unassigned_fusion_tracks->empty() || unassigned_sensor_objects->empty()) {
     return true;
   }
-
+  // 03 最小化匹配，先计算连通子图，再对连通子图计算匈牙利匹配 
+  // 匈牙利匹配(关联举矩阵association_mat计算、子图划分与二分图匹配)
   bool state = HmAssign(association_mat, assignments, unassigned_fusion_tracks,
                         unassigned_sensor_objects);
 
@@ -149,6 +152,7 @@ void PbfHmTrackObjectMatcher::ComputeAssociationMat(
   }
 }
 
+// 匈牙利匹配(关联矩阵association_mat计算、子图划分与二分图匹配)
 bool PbfHmTrackObjectMatcher::HmAssign(
     const std::vector<std::vector<double>> &association_mat,
     std::vector<std::pair<int, int>> *assignments,
@@ -157,6 +161,7 @@ bool PbfHmTrackObjectMatcher::HmAssign(
   double max_dist = s_max_match_distance_;
   std::vector<std::vector<int>> fusion_components;
   std::vector<std::vector<int>> sensor_components;
+  // 关联矩阵association_mat计算
   ComputeConnectedComponents(association_mat, max_dist, &fusion_components,
                              &sensor_components);
 
@@ -239,16 +244,18 @@ bool PbfHmTrackObjectMatcher::HmAssign(
   unassigned_sensor_objects->resize(unassigned_sensor_num);
   return true;
 }
-
+// 
 void PbfHmTrackObjectMatcher::MinimizeAssignment(
     const std::vector<std::vector<double>> &association_mat,
     std::vector<int> *ref_idx, std::vector<int> *new_idx) {
+  // 匈牙利 
   HungarianOptimizer hungarian_optimizer(association_mat);
-  hungarian_optimizer.minimize(ref_idx, new_idx);
+  hungarian_optimizer.minimize(ref_idx, new_idx); // modules/perception/obstacle/common/hungarian_bigraph_matcher.cc
 }
 
 bool PbfHmTrackObjectMatcher::Init() { return true; }
 
+// 关联矩阵association_mat计算
 void PbfHmTrackObjectMatcher::ComputeConnectedComponents(
     const std::vector<std::vector<double>> &association_mat,
     const float connected_threshold,
@@ -261,6 +268,7 @@ void PbfHmTrackObjectMatcher::ComputeConnectedComponents(
   }
 
   std::vector<std::vector<int>> nb_graph;
+  // 子图划分与二分图匹配
   nb_graph.resize(no_track + no_obj);
   for (int i = 0; i < no_track; i++) {
     for (int j = 0; j < no_obj; j++) {
@@ -272,6 +280,7 @@ void PbfHmTrackObjectMatcher::ComputeConnectedComponents(
   }
 
   std::vector<std::vector<int>> components;
+  // ？？？？
   ConnectedComponentAnalysis(nb_graph, &components);
   track_components->clear();
   track_components->resize(components.size());

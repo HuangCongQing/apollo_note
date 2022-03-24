@@ -94,6 +94,7 @@ void HungarianOptimizer::maximize(std::vector<int>* preimage,
 // Find an assignment which minimizes the total cost.
 // Return an array of pairs of integers.  Each pair (i, j) corresponds to
 // assigning agent i to task j.
+// 
 void HungarianOptimizer::minimize(std::vector<int>* preimage,
                                   std::vector<int>* image) {
   do_munkres();

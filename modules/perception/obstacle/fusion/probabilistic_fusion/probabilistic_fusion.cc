@@ -79,6 +79,7 @@ bool ProbabilisticFusion::Init() {
   return true;
 }
 
+// 
 bool ProbabilisticFusion::Fuse(
     const std::vector<SensorObjects> &multi_sensor_objects,
     std::vector<std::shared_ptr<Object>> *fused_objects) {
@@ -131,8 +132,11 @@ bool ProbabilisticFusion::Fuse(
   {
     fusion_mutex_.lock();
     // 3.peform fusion on related frames
+    // 这里所谓的数据融合，其实并不是真正意义上的，融合radar和lidar检测到的物体，
+    // 而是分别融合两个感知器的数据，也就是这两类检测数据是完全独立的，
+    // Fusion的工作只是将两类数据写入到一个容器中，lidar和radar数据(SensorObjects)之间无关联。
     for (size_t i = 0; i < frames.size(); ++i) {
-      FuseFrame(frames[i]);
+      FuseFrame(frames[i]); // 融合===============================================main
     }
 
     // 4.collect results
@@ -145,6 +149,7 @@ bool ProbabilisticFusion::Fuse(
 
 std::string ProbabilisticFusion::name() const { return "ProbabilisticFusion"; }
 
+// 
 void ProbabilisticFusion::FuseFrame(PbfSensorFramePtr frame) {
   AINFO << "Fusing frame: " << frame->sensor_id << ","
         << "object_number: " << frame->objects.size() << ","
@@ -156,6 +161,7 @@ void ProbabilisticFusion::FuseFrame(PbfSensorFramePtr frame) {
   DecomposeFrameObjects(objects, &foreground_objects, &background_objects);
 
   Eigen::Vector3d ref_point = frame->sensor2world_pose.topRightCorner(3, 1);
+  // 融合前景
   FuseForegroundObjects(&foreground_objects, ref_point, frame->sensor_type,
                         frame->sensor_id, frame->timestamp);
   track_manager_->RemoveLostTracks();
@@ -171,6 +177,7 @@ void ProbabilisticFusion::CreateNewTracks(
   }
 }
 
+// 第二步骤，更新匹配的
 void ProbabilisticFusion::UpdateAssignedTracks(
     std::vector<PbfTrackPtr> *tracks,
     const std::vector<std::shared_ptr<PbfSensorObject>> &sensor_objects,
@@ -252,6 +259,7 @@ void ProbabilisticFusion::DecomposeFrameObjects(
   }
 }
 
+// 融合前景
 void ProbabilisticFusion::FuseForegroundObjects(
     std::vector<std::shared_ptr<PbfSensorObject>> *foreground_objects,
     Eigen::Vector3d ref_point, const SensorType &sensor_type,
@@ -267,6 +275,7 @@ void ProbabilisticFusion::FuseForegroundObjects(
 
   std::vector<double> track2measurements_dist;
   std::vector<double> measurement2tracks_dist;
+  // 1 匹配
   matcher_->Match(tracks, *foreground_objects, options, &assignments,
                   &unassigned_tracks, &unassigned_objects,
                   &track2measurements_dist, &measurement2tracks_dist);
@@ -276,10 +285,10 @@ void ProbabilisticFusion::FuseForegroundObjects(
          << ", assignement = " << assignments.size()
          << ", unassigned_track_cnt = " << unassigned_tracks.size()
          << ", unassigned_obj_cnt = " << unassigned_objects.size();
-
+  // 2 更新匹配的Ttracks
   UpdateAssignedTracks(&tracks, *foreground_objects, assignments,
                        track2measurements_dist);
-
+  // 3 更新没有匹配的 unassigned_objects
   UpdateUnassignedTracks(&tracks, unassigned_tracks, track2measurements_dist,
                          sensor_type, sensor_id, timestamp);
 

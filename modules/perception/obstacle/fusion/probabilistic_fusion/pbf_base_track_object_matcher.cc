@@ -32,6 +32,7 @@ double PbfBaseTrackObjectMatcher::GetMaxMatchDistance() {
   return s_max_match_distance_;
 }
 
+// 匹配第一步骤
 void PbfBaseTrackObjectMatcher::IdAssign(
     const std::vector<PbfTrackPtr> &fusion_tracks,
     const std::vector<std::shared_ptr<PbfSensorObject>> &sensor_objects,

@@ -50,6 +50,7 @@ class PbfBaseTrackObjectMatcher {
   // @prams[OUT] measurement2track_dist:minimum match distacne to tracks for
   // each measurement
   // @return nothing
+  // 匹配=========================================================================
   virtual bool Match(
       const std::vector<PbfTrackPtr> &fusion_tracks,
       const std::vector<std::shared_ptr<PbfSensorObject>> &sensor_objects,
