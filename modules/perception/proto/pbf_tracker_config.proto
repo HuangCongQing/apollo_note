@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package apollo.perception.fusion;
+// void PbfTracker::UpdateWithMeasurement  modules/perception/fusion/lib/data_fusion/tracker/pbf_tracker/pbf_tracker.cc
+message PbfTrackerConfig {
+  optional string type_fusion_method = 1 [default = "DstTypeFusion"]; // 证据推理（DS theory）更新tracker的存在性
+  optional string motion_fusion_method = 2 [default = "KalmanMotionFusion"]; // 鲁棒卡尔曼滤波更新tracker的运动属性   
+  optional string shape_fusion_method = 3 [default = "PbfShapeFusion"]; // 更新tracker的形状
+  optional string existence_fusion_method = 4 [default = "DstExistenceFusion"]; // 证据推理（DS theory）更新tracker的属性
+}

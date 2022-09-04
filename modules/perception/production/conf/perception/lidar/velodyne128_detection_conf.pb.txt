@@ -1,0 +1,6 @@
+sensor_name: "velodyne128"
+enable_hdmap: true # 激活高精度地图,然后检测的结果存放在 DetectionObjects 这个 channel。
+lidar_query_tf_offset: 0
+# lidar2novatel_tf2_child_frame_id: "velodyne128"
+lidar2novatel_tf2_child_frame_id: "velodyne64"
+output_channel_name: "/perception/inner/DetectionObjects"
