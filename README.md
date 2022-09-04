@@ -1,11 +1,16 @@
 # Apollo6.0-note
 百度的自动驾驶平台Apollo项目-学习
 
+1. Apollo6.0:master当前分支
+2. Apollo3.0:hcq3.0(https://github.com/HuangCongQing/apollo_note/tree/hcq3.0)
+
 * 官方：https://apollo.auto/devcenter/idpcourse_cn.html
 * github：https://github.com/ApolloAuto/apollo
 * 学习中心：https://apollo.auto/devcenter/idpcourse_cn.html
 * 个人笔记：https://www.yuque.com/huangzhongqing/apollo
   * 个人笔记:https://www.yuque.com/huangzhongqing/crvg1o/yggszk
+
+
 
 **Apollo是百度的自动驾驶开源框架，根据自动驾驶的功能划分为不同的模块**
 
