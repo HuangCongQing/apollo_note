@@ -9,6 +9,7 @@
 * 学习中心：https://apollo.auto/devcenter/idpcourse_cn.html
 * 个人笔记：https://www.yuque.com/huangzhongqing/apollo
   * 个人笔记:https://www.yuque.com/huangzhongqing/crvg1o/yggszk
+* 【20230102】百度Apollo 1.0-8.0各版本框架概述(v8.0updated)： https://zhuanlan.zhihu.com/p/258057165
 
 
 
