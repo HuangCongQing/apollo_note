@@ -1,7 +1,7 @@
 # Apollo6.0-note
-百度的自动驾驶平台Apollo项目-学习
+百度的自动驾驶平台Apollo项目-学习（主要感知）
 
-1. Apollo6.0:master当前分支
+1. **Apollo6.0:master当前分支**
 2. Apollo3.0:[hcq3.0分支](https://github.com/HuangCongQing/apollo_note/tree/hcq3.0)
 
 * 官方：https://apollo.auto/devcenter/idpcourse_cn.html
